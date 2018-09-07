@@ -22,9 +22,6 @@ class Configuration(object):
         self._from_ini()
         self._from_console()
 
-        if all([self.mongo_url, self.mongo_database]) or not any([self.mongo_url, self.mongo_database]):
-            raise Exception("Once mongo_url is provided, none of host, port and database can be provided")
-
     def _from_console(self):
         self.arg_parser = argparse.ArgumentParser(description="Mongodb migration parser")
 
