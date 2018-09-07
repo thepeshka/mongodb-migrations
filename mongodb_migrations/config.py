@@ -21,7 +21,10 @@ class Configuration(object):
     def __init__(self):
         self._from_ini()
         self._from_console()
-
+        
+        if not self.mongo_url and (self.mongo_database and not any([self.mongo_host, self.mongo_port])):
+            raise Exception("Once mongo_url is provided, none of host, port and database can be provided")
+        
     def _from_console(self):
         self.arg_parser = argparse.ArgumentParser(description="Mongodb migration parser")
 
@@ -37,10 +40,7 @@ class Configuration(object):
                                      help="directory of migration files")
         self.arg_parser.add_argument('--downgrade', action='store_true',
                                      default=False, help='Downgrade instead of upgrade')
-        args = self.arg_parser.parse_args()
-
-        if all([args.url, args.database]) or not any([args.url, args.database]):
-            self.arg_parser.error("--url or --database must be used but not both")
+        args = self.arg_parser.parse_known_args()[0]
 
         self.mongo_url = args.url
         self.mongo_host = args.host
